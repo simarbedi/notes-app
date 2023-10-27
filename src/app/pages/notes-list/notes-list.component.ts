@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Note } from 'src/app/shared/note.model';
 import { NotesService } from 'src/app/shared/notes.service';
+import { AppState } from 'src/app/state/app.state';
+import { loadNotes, removeNote } from 'src/app/state/notes/notes.actions';
+import { selectAllNotes } from 'src/app/state/notes/notes.selector';
 
 @Component({
     selector: 'app-notes-list',
@@ -8,15 +12,17 @@ import { NotesService } from 'src/app/shared/notes.service';
     styleUrls: ['./notes-list.component.sass'],
 })
 export class NotesListComponent implements OnInit {
-    notes: Note[] = new Array<Note>();
-    constructor(private notesService: NotesService) {}
+    public notes$ = this.store.select(selectAllNotes);
+    constructor(
+        private notesService: NotesService,
+        private store: Store<AppState>,
+    ) {}
 
     ngOnInit(): void {
-      this.notes = this.notesService.getAll()
-      console.log(this.notes);
-      
+         this.store.dispatch(loadNotes());
     }
-    deleteNote(id:number){
-      this.notesService.delete(id);
+
+    deleteNote(id: number) {
+        this.store.dispatch(removeNote({id:id}))
     }
 }

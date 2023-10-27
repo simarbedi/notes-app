@@ -8,30 +8,47 @@ export class NotesService {
     notes: Note[] = new Array<Note>();
     constructor() {}
 
-    getAll(){
-      return this.notes;
+    async getAll(): Promise<Note[]> {
+        return new Promise((req, res) => {
+            return this.notes;
+        });
     }
-    get(id: number) {
-        return this.notes[id];
-    }
+    // get(id: number) {
+    //     return this.notes[id];
+    // }
 
-    getId(note: Note) {
-        this.notes.indexOf(note);
-    }
+    // getId(note: Note) {
+    //     this.notes.indexOf(note);
+    // }
 
-    add(note: Note) {
+    async add(note: Note): Promise<Note> {
+        console.log('add service', note);
         let len = this.notes.push(note);
         let index = len - 1;
-        return index;
+        return new Promise((req, res) => {
+            return note;
+        });
     }
 
-    update(id: number, title: string, body: string) {
-        let note = this.notes[id];
-        note.title = title;
-        note.body = body;
+    async update(id: number, title: string, body: string): Promise<Note> {
+        return new Promise((req, res) => {
+            let note = this.notes.find((e) => e.id == id);
+            let temp = new Note();
+            if (note != undefined) {
+                temp.title = title;
+                temp.body = body;
+                temp.id = note.id;
+            } else {
+                note = new Note();
+                note.setter(Date.now(), title, body);
+            }
+            this.notes = [...this.notes.filter((e) => e.id != note?.id), temp];
+            console.log("update service",this.notes);
+            return this.notes;
+        });
     }
 
-    delete(id: number) {
-        this.notes.splice(id, 1);
-    }
+    // delete(id: number) {
+    //     this.notes.splice(id, 1);
+    // }
 }
